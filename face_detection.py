@@ -85,7 +85,7 @@ cv2.imshow("result", image)
 print((list_points[JAWLINE][8]-list_points[NOSE][6])[1],": 하안부 좌표 길이") # 하안부 좌표 길이'''
 
 
-#########################가영 추가
+################0502 추가
 
 #이목구비 면적 구하기
 
