@@ -34,8 +34,8 @@ reye_h = abs(list_points[RIGHT_EYE][1]-list_points[RIGHT_EYE][5])[1] # 오른쪽
 
 
 # 얼굴 전체 면적
-face_w = abs(list_points[JAWLINE][1]-list_points[JAWLINE][15])[0] #얼굴 가로
-face_h = abs(list_points[JAWLINE][8]-hair_line_point)[1] #얼굴 세로
+face_w = abs(list_points[JAWLINE][1]-list_points[JAWLINE][15])[0] # 얼굴 가로
+face_h = abs(list_points[JAWLINE][8]-hair_line_point)[1] # 얼굴 세로
 
 print("얼굴 가로 길이 : ", face_w)
 print("얼굴 세로 길이 : ", face_h)
