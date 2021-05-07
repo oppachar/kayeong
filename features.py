@@ -57,33 +57,39 @@ print("콧볼 비율 : ", abs(face_w/nose_w))
 
 if (abs(face_w/nose_w) >= 5.5 and abs(face_w/nose_w) <= 6.8):
     print("콧볼 크기 평균")
-elif (abs(face_w/nose_w) > 6.8):
-    print("콧볼 작은 편")
 elif (abs(face_w/nose_w) < 5.5):
     print("콧볼 큰 편")
+elif (abs(face_w/nose_w) > 6.8):
+    print("콧볼 작은 편")
+
 
 #눈 가로 크기 판별
-print("눈 가로 비율 : ", abs(face_w/reye_w))
 
-if (abs(face_w/reye_w) >= 5.5 and abs(face_w/reye_w) <= 5.6):
+ratio_eyew = abs(face_w/reye_w)
+print("눈 가로 비율 : ", ratio_eyew)
+
+if (ratio_eyew >= 5.5 and ratio_eyew <= 5.85): # 평균값 = 5.675
     print("눈 가로 길이 평균")
-elif (abs(face_w/reye_w) > 5.6):
-    print("눈 가로 길이 작은 편")
-elif (abs(face_w/reye_w) < 5.5):
-    print("눈 가로 길이 긴 편")
+elif (ratio_eyew < 5.5):
+    print("눈 가로 길이 평균보다 %.1f%% 긴 편" %(abs(5.675-ratio_eyew)))
+elif (ratio_eyew > 5.85):
+    print("눈 가로 길이 평균보다 %.1f%% 짧은 편" %(abs(5.675-ratio_eyew)))
 
 
 #눈 세로 크기 판별
-print("눈 세로 비율 : ", abs(face_h/reye_h))
 
-if (abs(face_h/reye_h) >= 22.6 and abs(face_h/reye_h) <= 25):
+ratio_eyeh = abs(face_h/reye_h)
+print("눈 세로 비율 : ", ratio_eyeh)
+
+if (ratio_eyeh >= 22.6 and ratio_eyeh <= 25): # 평균비 = 23.8
     print("눈 세로 길이 평균")
-elif (abs(face_h/reye_h) > 25):
-    print("눈 세로 길이 작은 편")
-elif (abs(face_h/reye_h) < 22.6):
-    print("눈 세로 길이 큰 편")
+elif (ratio_eyeh < 22.6):
+    print("눈 세로 길이 평균보다 %.1f%% 긴 편" %(abs(23.8-ratio_eyeh)))
+elif (ratio_eyeh > 25):
+    print("눈 세로 길이 평균보다 %.1f%% 짧은 편" %(abs(23.8-ratio_eyeh)))
 
-cv2.imshow("result", image)
+
+#cv2.imshow("result", image)
 #cv2.imshow("8", image2)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
