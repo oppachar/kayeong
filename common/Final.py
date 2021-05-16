@@ -82,15 +82,12 @@ def hair_up (img1,list_points):
             x, y, w, h = faces[0]
             (x, y, w, h) = (x - 40, y - 100, w + 80, h + 200)
             rect1 = (x, y, w, h)
-            cv2.grabCut(img, mask, rect1, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_RECT)  # Crop BG around the head
+            cv2.grabCut(img1, mask, rect1, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_RECT)  # Crop BG around the head
         mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')  # Take the mask from BG
 
         return mask2
-    mask = get_head_mask(img1)
-    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[1]
-    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
-    cnt = cnts[0]
-    topmost = tuple(cnt[cnt[:, :, 1].argmin()][0])
+
+
 
     def is_bold(pnt, hair_mask):
         """
@@ -109,10 +106,28 @@ def hair_up (img1,list_points):
             # print("Not Bold")
             return False
 
+    mask = get_head_mask(img1)
+
+    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[1]
+    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
+    cnt = cnts[0]
+    topmost = tuple(cnt[cnt[:, :, 1].argmin()][0])
+
+    lower = np.array([0, 0, 100], dtype="uint8")  # Lower limit of skin color
+    upper = np.array([255, 255, 255], dtype="uint8")  # Upper skin color limit
+    converted = cv2.cvtColor(img1, cv2.COLOR_BGR2HSV)  # We translate into HSV color format
+    skinMask = cv2.inRange(converted, lower, upper)  # Write a mask from places where the color is between the outside
+    mask[skinMask == 255] = 0  # We remove the face mask from the mask of the head
+
+    kernel1 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    mask = cv2.dilate(mask, kernel1, iterations=1)
+    i1 = cv2.bitwise_and(img1, img1, mask=mask)
 
     if is_bold(topmost, mask):
         cv2.rectangle(img1, topmost, topmost, (0, 0, 255), 5)
         print(topmost)
+
+
 
     # Otherwise we write that we are not bald and display the coordinates of the largest contour
     else:
@@ -129,9 +144,11 @@ def hair_up (img1,list_points):
                 if (max_y < point[1]):
                     max_y = point[1]
 
+        hair_line_point = list_points[NOSE][0][0], max_y
+        cv2.circle(img1, (list_points[NOSE][0][0], max_y), 2, (0, 255, 0), -1)
 
-    hair_line_point = list_points[NOSE][0][0], max_y
     up = (list_points[RIGHT_EYEBROW][4] - hair_line_point)[1]
+
 
     return up
 
@@ -191,6 +208,8 @@ def side_cheekbone_have(list_points):
     return flag
 
 # 앞광대 여부
+
+
 def front_cheekbone_have(list_points,image_side):
 
     pTime = 0
@@ -236,8 +255,8 @@ def front_cheekbone_have(list_points,image_side):
 #image_side = cv2.imread("dani_is_Kayoung's_bf.jpg")
 
 
-image_front_origin = cv2.imread("13.jpg")
-image_side_origin = cv2.imread("22.jpg")
+image_front_origin = cv2.imread("./front/19.jpg")
+image_side_origin = cv2.imread("./side/3.jpg")
 
 # 얼굴형 분류 모델의 위치 = PATH
 PATH = 'model_76.pt'
@@ -288,8 +307,8 @@ print("얼굴 비", ratio)
 print("얼굴 옆광대 ", cheek_side)
 print("얼굴 앞광대 ", cheek_front)
 
+cv2.imshow("front result", image_front)
+cv2.imshow("side result", image_side)
 
-
-
-
-
+cv2.waitKey(0)
+cv2.destroyAllWindows()
