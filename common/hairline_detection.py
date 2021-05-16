@@ -1,10 +1,10 @@
 import numpy as np
 import imutils
 import cv2
-from face_detection import image
+from face_detection import image_front
 from face_detection import list_points, NOSE, RIGHT_EYEBROW, center, low
 
-file_name=image
+file_name=image_front
 cascadePath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 
@@ -49,7 +49,7 @@ def is_bold(pnt, hair_mask):
         #print("Not Bold")
         return False
 
-img1 = image     # Load image
+img1 = image_front     # Load image
 #img1 = imutils.resize(image, height=500)     # We result in 500px in height
 mask = get_head_mask(img1)      # We get the mask of the head (without BG)
 

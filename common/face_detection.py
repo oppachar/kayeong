@@ -18,13 +18,16 @@ JAWLINE = list(range(0, 17)) # index 1, 15 = 옆광대
 
 index = ALL
 
-image = cv2.imread("./front/19.jpg") #image_front, image_side 로 나누기
+image_front = cv2.imread("dani2.jpg") #image_front, image_side 로 나누기
+image_side = cv2.imread("dani.jpg")
 
-print(type(image))
-image = imutils.resize(image, height=500) # image 크기 조절
 
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+image_front = imutils.resize(image_front, height=500) # image 크기 조절
+image_side = imutils.resize(image_side, height=500) # image 크기 조절
+
+gray = cv2.cvtColor(image_front, cv2.COLOR_BGR2GRAY)
 rects = detector(gray, 1)
+
 
 for face in rects:
     shape = predictor(gray, face)
@@ -37,14 +40,11 @@ for face in rects:
 
     for i, pt in enumerate(list_points[ALL]):
         pt_pos = (pt[0], pt[1])
-        cv2.circle(image, pt_pos, 2, (0, 255, 0), -1)
+        cv2.circle(image_front, pt_pos, 2, (0, 255, 0), -1)
 
-    # for i, pt in enumerate(list_points[JAWLINE]):
-    #     pt_pos = (pt[0], pt[1])
-    #     if (i==1 or i==2 or i==3 or i==14 or i==15 or i==16):
-    #         cv2.circle(image, pt_pos, 2, (0, 255, 0), -1)
 
-p = (list_points[NOSE][0]+list_points[RIGHT_EYEBROW][4])/2 +1
+
+p = (list_points[NOSE][0]+list_points[RIGHT_EYEBROW][4])/2 + 1
 center = (list_points[NOSE][6]-p)[1]
 low = (list_points[JAWLINE][8]-list_points[NOSE][6])[1]
 

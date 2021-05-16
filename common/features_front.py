@@ -162,12 +162,16 @@ y = (list_points[JAWLINE][14]-list_points[JAWLINE][15])[1]
 if (abs(y/x) >= 7.0): flag= 1
 
 if (flag == 1):
+    cheek_front = 1
+
     print("옆광대 여부 : O")
 else :
+    cheek_front = 0
+
     print("옆광대 여부 : X")
 
 
-cv2.imshow("result", image)
+cv2.imshow("front result", image_front)
 #cv2.imshow("8", image2)
 cv2.waitKey(0)
 cv2.destroyAllWindows()

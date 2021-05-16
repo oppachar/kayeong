@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import os
 import torchvision.models as models
 import torch.nn as nn
-from face_detection import image
+from face_detection import image_front
 
 
 def imshow(input, title):
@@ -49,10 +49,10 @@ image = Image.open('./front/before.jpg')
 image.show()
 image = transforms_test(image).unsqueeze(0).to(device)    # tensor 형태로'''
 
-image2 = Image.fromarray(image)
+image2 = Image.fromarray(image_front)
 #print(type(image))
 image2 = transforms_test(image2).unsqueeze(0).to(device)
-cv2.imshow("Output!!!!!", image)
+cv2.imshow("Output!!!!!", image_front)
 
 
 class_names = ["각진형", "계란형 ", "둥근형", "마름모형", "하트형"]
