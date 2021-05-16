@@ -302,7 +302,7 @@ cheek_side = side_cheekbone_have(list_points)
 cheek_front = front_cheekbone_have(list_points,image_side)
 
 
-print("얼굴형_인덱스", faceline_index)
+print("얼굴형_인덱스", faceline_index) #"각진형", "계란형 ", "둥근형", "마름모형", "하트형"
 print("얼굴 비", ratio)
 print("얼굴 옆광대 ", cheek_side)
 print("얼굴 앞광대 ", cheek_front)
