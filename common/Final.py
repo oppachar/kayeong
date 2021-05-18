@@ -22,18 +22,19 @@ def faceline(image_front, PATH):
 
     device = torch.device("cpu")
 
-    # 모델 초기화
-    model = torch.load(PATH, map_location=torch.device('cpu'))
     # 모델 불러오기
+    model = torch.load(PATH, map_location=torch.device('cpu'))
+
     # 드롭아웃 및 배치 정규화를 평가 모드로 설정
     model.eval()
     # 이미지 불러오기
-    image2 = Image.fromarray(image_front)
-    image2 = transforms_test(image2).unsqueeze(0).to(device)
+
+
+    image = transforms_test(image_front).unsqueeze(0).to(device)
 
     # 불러온 이미지를 얼굴형 분류 모델에 집어넣기
     with torch.no_grad():
-        outputs = model(image2)
+        outputs = model(image)
         _, preds = torch.max(outputs, 1)
         num = preds[0].tolist()
 
@@ -364,11 +365,11 @@ def front_cheekbone_have(list_points,image_side):
 # 이미지 읽어오기
 
 
-image_front_origin = cv2.imread("./front/19.jpg")
-image_side_origin = cv2.imread("./side/3.jpg")
-
+image_front_origin = cv2.imread("./front/IMG_6863.JPG")
+image_side_origin = cv2.imread("./side/2.jpg")
+image_faceline = Image.open("./front/IMG_6863.JPG")
 # 얼굴형 분류 모델의 위치 = PATH
-PATH = 'model_76.pt'
+PATH = 'model83.pt'
 
 image_front = imutils.resize(image_front_origin, height=500)  # image 크기 조절
 image_side = imutils.resize(image_side_origin, height=500)  # image 크기 조절
@@ -389,7 +390,7 @@ JAWLINE = list(range(0, 17))  # index 1, 15 = 옆광대
 
 index = ALL
 
-faceline_index = faceline(image_front,PATH)
+faceline_index = faceline(image_faceline,PATH)
 
 center, low, list_points = face_detection(image_front)
 
@@ -404,7 +405,6 @@ face_h = abs(list_points[JAWLINE][8]-up)[1] # 얼굴 세로
 1 # 상안부 길 때
 2 # 중안부 길 때
 3 # 하안부 길 때
-
 눈 세로
 눈 가로
 미간거리
