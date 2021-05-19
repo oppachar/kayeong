@@ -22,14 +22,12 @@ def faceline(image_front, PATH):
 
     device = torch.device("cpu")
 
-    # 모델 불러오기
+    # 모델 초기화
     model = torch.load(PATH, map_location=torch.device('cpu'))
-
+    # 모델 불러오기
     # 드롭아웃 및 배치 정규화를 평가 모드로 설정
     model.eval()
     # 이미지 불러오기
-
-
     image = transforms_test(image_front).unsqueeze(0).to(device)
 
     # 불러온 이미지를 얼굴형 분류 모델에 집어넣기
@@ -61,7 +59,7 @@ def face_detection(image_front):
     center = (list_points[NOSE][6] - p)[1]
     low = (list_points[JAWLINE][8] - list_points[NOSE][6])[1]
 
-    return  center, low , list_points
+    return  center, low, list_points
 
 def hair_up (img1,list_points):
     cascadePath = "haarcascade_frontalface_default.xml"
@@ -196,8 +194,8 @@ def side_cheekbone_have(list_points):
     flag = 0
     x = (list_points[JAWLINE][1] - list_points[JAWLINE][2])[0]
     y = (list_points[JAWLINE][1] - list_points[JAWLINE][2])[1]
-    # print(abs(y/x))
-    if (abs(y / x) >= 7.0): flag = 1
+    print(abs(y/x))
+    if (abs(y / x) >= 6.8): flag = 1
 
     ''' <광대 여부 있나 확인> 
     if (flag == 1):
@@ -237,11 +235,11 @@ def nose_detection(list_points,image_front):
     nose_w = abs(nose[0][0] - nose[1][0])
     ratio_nose = abs(face_w/nose_w)
 
-    if (ratio_nose >= 3.4 and ratio_nose <= 4.0): #평균 3.7
+    if (ratio_nose >= 3.5 and ratio_nose <= 4.0): #평균 3.7
         nose_result = 0
         nose_percent = 0
         #print("콧볼 크기는 평균입니다")
-    elif (ratio_nose < 3.4):
+    elif (ratio_nose < 3.5):
         nose_result = 1
         nose_percent = abs(3.7 - ratio_nose)
         print("콧볼", ratio_nose)
@@ -302,24 +300,48 @@ def between_detection(list_points):
     eyetoeye = abs(list_points[RIGHT_EYE][3] - list_points[LEFT_EYE][0])[0]  # 미간 거리
     between_ratio = abs(face_w / eyetoeye)
 
-    if (between_ratio >= 3.8 and between_ratio < 3.9): #평균=4
+    if (between_ratio >= 3.4 and between_ratio < 3.9):
         between_result = 0
         between_percent = 0
-        print("미간 평균 ", between_ratio)
+        #print("미간 평균 ", between_ratio)
 
-    elif (between_ratio < 3.8):
-        between_result = 1
-        between_percent = abs(4.75 - between_ratio)
-        print("미간 짧은 편 ", between_ratio)
-        #미간 긴 편
-    elif (between_ratio > 3.9):
+    elif (between_ratio < 3.4):
         between_result = -1
         between_percent = abs(4.75 - between_ratio)
-        print("미간 긴 편 ", eyetoeye)
+        #print("미간 짧은 편 ", between_ratio)
+        #미간 긴 편
+    elif (between_ratio > 3.9):
+        between_result = 1
+        between_percent = abs(4.75 - between_ratio)
+        #print("미간 긴 편 ", between_ratio)
 
         #미간 짧은편
 
     return between_result, between_percent
+
+def eyeshape_detection(list_points):
+
+    p1 = list_points[RIGHT_EYE][0][1]
+    p2 = list_points[RIGHT_EYE][1][1]
+    p3 = list_points[RIGHT_EYE][2][1]
+    p4 = list_points[RIGHT_EYE][3][1]
+    p5 = list_points[RIGHT_EYE][4][1]
+    p6 = list_points[RIGHT_EYE][5][1]
+
+    if (p1 == p4):
+        ear = 0
+    else:
+        ear = (abs(p2 - p6) + abs(p3 - p5)) / (2 * (abs(p1 - p4)))
+
+    #print("눈의 비율", ear[1])
+    if (ear <= 2.6):
+        #print("꼬막눈 여부 : O")
+        eyeshape_result = 1
+    else:
+        #print("꼬막눈 여부 : X")
+        eyeshape_result = 0
+
+    return eyeshape_result
 
 
 # 앞광대 여부
@@ -350,9 +372,9 @@ def front_cheekbone_have(list_points,image_side):
 
     m = (cheekbone[3][2] - cheekbone[1][2]) / (cheekbone[3][1] - cheekbone[1][1])  # 123번-192번 기울기
 
-    #print("기울기", m)
+    print("기울기", m)
 
-    if (m <= 3.4):
+    if (m <= 3.5):
         #print("앞광대 O")
         cheek_side = 1
     else:
@@ -365,11 +387,12 @@ def front_cheekbone_have(list_points,image_side):
 # 이미지 읽어오기
 
 
-image_front_origin = cv2.imread("./front/IMG_6863.JPG")
-image_side_origin = cv2.imread("./side/2.jpg")
-image_faceline = Image.open("./front/IMG_6863.JPG")
+image_front_origin = cv2.imread("./front/32.jpg")
+image_side_origin = cv2.imread("./side/before.jpg")
+image_faceline = Image.open("./front/32.jpg")
+
 # 얼굴형 분류 모델의 위치 = PATH
-PATH = 'model83.pt'
+PATH = 'model_76.pt'
 
 image_front = imutils.resize(image_front_origin, height=500)  # image 크기 조절
 image_side = imutils.resize(image_side_origin, height=500)  # image 크기 조절
@@ -405,6 +428,7 @@ face_h = abs(list_points[JAWLINE][8]-up)[1] # 얼굴 세로
 1 # 상안부 길 때
 2 # 중안부 길 때
 3 # 하안부 길 때
+
 눈 세로
 눈 가로
 미간거리
@@ -430,17 +454,25 @@ eyew_result, eyew_percent = eyew_detection(list_points)
 # 미간 0: 평균 , 1: 큼 , -1: 작음
 between_result, between_percent = between_detection(list_points)
 
+# 눈꼬리 1: 올라감 0: 올라가지않음
+eyeshape_result = eyeshape_detection(list_points)
+
+if(eyeshape_result == 1 and eyew_result == -1): #올라간 눈이면서 눈 짧으면
+    shorteye_index = 1 # 꼬막눈 O
+else:
+    shorteye_index = 0 # 꼬막눈 X
 
 print("얼굴형_인덱스", faceline_index) #"각진형", "계란형 ", "둥근형", "마름모형", "하트형"
 print("얼굴 비", ratio)
-print("얼굴 옆광대 ", cheek_side)
-print("얼굴 앞광대 ", cheek_front)
+print("얼굴 옆광대", cheek_side)
+print("얼굴 앞광대", cheek_front)
 
-print("콧볼 ", nose_result, nose_percent)
-print("미간 ", between_result, between_percent)
+print("콧볼", nose_result, nose_percent)
+print("미간", between_result, between_percent)
 print("눈 세로", eyeh_result, eyeh_percent)
 print("눈 가로", eyew_result, eyew_percent)
-
+print("올라간 눈", eyeshape_result)
+print("꼬막눈", shorteye_index)
 
 cv2.imshow("front result", image_front)
 cv2.imshow("side result", image_side)
