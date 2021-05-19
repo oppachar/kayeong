@@ -186,7 +186,7 @@ def face_length_ratio (up, low, center):
         ratio = 2  # 중안부 길 때
     elif (lower_ratio > upper_ratio and lower_ratio > center_ratio):
         ratio = 3  # 하안부 길 때
-    elif (upper_ratio < center_ratio and upper_ratio < lower_ratio):
+    elif (lower_ratio == center_ratio and upper_ratio < center_ratio and upper_ratio < lower_ratio):
         ratio = 4  # 상안부가 가장 짧을 때
 
     return ratio
