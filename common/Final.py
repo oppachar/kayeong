@@ -186,6 +186,8 @@ def face_length_ratio (up, low, center):
         ratio = 2  # 중안부 길 때
     elif (lower_ratio > upper_ratio and lower_ratio > center_ratio):
         ratio = 3  # 하안부 길 때
+    elif (upper_ratio < center_ratio and upper_ratio < lower_ratio):
+        ratio = 4  # 상안부가 가장 짧을 때
 
     return ratio
 
@@ -428,6 +430,7 @@ face_h = abs(list_points[JAWLINE][8]-up)[1] # 얼굴 세로
 1 # 상안부 길 때
 2 # 중안부 길 때
 3 # 하안부 길 때
+4 # 상안부 짧을 때
 
 눈 세로
 눈 가로
