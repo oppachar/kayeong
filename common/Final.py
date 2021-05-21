@@ -233,18 +233,18 @@ def nose_detection(list_points,image_front):
     nose_w = abs(nose[0][0] - nose[1][0])
     ratio_nose = abs(face_w/nose_w)
 
-    if (ratio_nose >= 3.5 and ratio_nose <= 4.0): # 평균 3.7
+    if (ratio_nose >= 3.5 and ratio_nose <= 4.0): # 평균 3.75
         nose_result = 0
         nose_percent = 0
         #print("콧볼 크기는 평균입니다")
     elif (ratio_nose < 3.5):
         nose_result = 1
-        nose_percent = abs(3.7 - ratio_nose)
+        nose_percent = abs(3.75 - ratio_nose)
         #print("콧볼", ratio_nose)
         #print("콧볼 크기는 평균보다 %.1f%% 큰 편입니다" % (abs(nose[0][0] - list_points[RIGHT_EYE][3][0]) / face_w))
     elif (ratio_nose >= 4.0):
         nose_result = -1
-        nose_percent = abs(3.7 - ratio_nose)
+        nose_percent = abs(3.75 - ratio_nose)
         #print("콧볼", ratio_nose)
         #print("콧볼 크기 %.1f%% 작은 편입니다" % (abs(nose[0][0] - list_points[RIGHT_EYE][3][0]) / face_w))
 
@@ -318,7 +318,7 @@ def between_detection(list_points):
 
     #print("미간", between_ratio)
 
-    if (between_ratio >= 3.0 and between_ratio < 3.5):
+    if (between_ratio >= 3.0 and between_ratio <= 3.5):
         between_result = 0
         between_percent = 0
         #print("미간 평균 ", between_ratio)
@@ -395,7 +395,7 @@ def front_cheekbone_have(list_points,image_side):
 
     #print("기울기", m)
 
-    if (m <= 3.5):
+    if (m <= 3.45):
         #print("앞광대 O")
         cheek_side = 1
     else:
