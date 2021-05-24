@@ -3,7 +3,6 @@ import mediapipe as mp
 from torchvision import datasets, models, transforms
 import torch
 from PIL import Image, ImageOps
-import numpy as np
 import dlib
 import cv2
 import numpy as np
@@ -192,8 +191,8 @@ def side_cheekbone_have(list_points):
     flag = 0
     x = (list_points[JAWLINE][1] - list_points[JAWLINE][2])[0]
     y = (list_points[JAWLINE][1] - list_points[JAWLINE][2])[1]
-    #print(abs(y/x))
-    if (abs(y / x) >= 6.8): flag = 1
+    print("옆광대",abs(y/x))
+    if (abs(y / x) <= 6.0): flag = 1
 
     ''' <광대 여부 있나 확인> 
     if (flag == 1):
@@ -232,18 +231,18 @@ def nose_detection(list_points,image_front):
 
     #print("콧볼", ratio_nose)
 
-    if (ratio_nose >= 3.85 and ratio_nose <= 4.2): # 평균 3.825
+    if (ratio_nose >= 3.75 and ratio_nose <= 4.2): # 평균 3.825
         nose_result = 0
         nose_percent = 0
         #print("콧볼 크기는 평균입니다")
-    elif (ratio_nose < 3.85):
+    elif (ratio_nose < 3.75):
         nose_result = 1
-        nose_percent = abs(3.925 - ratio_nose)
+        nose_percent = round(abs(3.975 - ratio_nose),2)
         #print("콧볼", ratio_nose)
         #print("콧볼 크기는 평균보다 %.1f%% 큰 편입니다" % (abs(nose[0][0] - list_points[RIGHT_EYE][3][0]) / face_w))
-    elif (ratio_nose >= 4.2):
+    elif (ratio_nose > 4.2):
         nose_result = -1
-        nose_percent = abs(3.925 - ratio_nose)
+        nose_percent = abs(3.975 - ratio_nose)
         #print("콧볼", ratio_nose)
         #print("콧볼 크기 %.1f%% 작은 편입니다" % (abs(nose[0][0] - list_points[RIGHT_EYE][3][0]) / face_w))
 
@@ -261,11 +260,11 @@ def eyew_detection(list_points):
         #print("눈 가로 길이는 평균")
     elif (ratio_eyew < 5.5):
         eyew_result = 1
-        eyew_percent = abs(5.675 - ratio_eyew)
+        eyew_percent = round(abs(5.675 - ratio_eyew),2)
         #print("눈 가로 길이 평균보다 %.1f%% 긴 편" % (abs(5.675 - ratio_eyew)))
     elif (ratio_eyew > 5.85):
         eyew_result = -1
-        eyew_percent = abs(5.675 - ratio_eyew)
+        eyew_percent = round(abs(5.675 - ratio_eyew),2)
         #print("눈 가로 길이 평균보다 %.1f%% 짧은 편" % (abs(5.675 - ratio_eyew)))
 
     return eyew_result, eyew_percent
@@ -284,11 +283,11 @@ def eyeh_detection(list_points):
         # print("눈 세로 길이 평균")
     elif (ratio_eyeh < 21.1):
         eyeh_result = 1
-        eyeh_percent = abs(21.8 - ratio_eyeh)
+        eyeh_percent = round(abs(21.8 - ratio_eyeh),2)
         # print("눈 세로 길이 평균보다 %.1f%% 긴 편" % (abs(23.8 - ratio_eyeh)))
     elif (ratio_eyeh > 22.5):
         eyeh_result = -1
-        eyeh_percent = abs(21.8 - ratio_eyeh)
+        eyeh_percent = round(abs(21.8 - ratio_eyeh),2)
         # print("눈 세로 길이 평균보다 %.1f%% 짧은 편" % (abs(23.8 - ratio_eyeh)))
 
     return eyeh_result, eyeh_percent
@@ -298,13 +297,13 @@ def lips_detection(list_points):
     lips_w = abs(list_points[MOUTH_OUTLINE][0] - list_points[MOUTH_OUTLINE][6])[0]  # 입술 가로
 
     ratio_lips = face_w / lips_w
-    #print("입술", ratio_lips)
+    print("입술", ratio_lips)
 
-    if (ratio_lips >= 3.0 and ratio_lips <= 3.25):
+    if (ratio_lips >= 2.5 and ratio_lips <= 2.9):
         lips_result = 0 # 입술 가로 길이 평균
-    elif (ratio_lips < 3.0):
+    elif (ratio_lips < 2.5):
         lips_result = 1 # 입술 가로 길이 긴 편
-    elif (ratio_lips > 3.25):
+    elif (ratio_lips > 2.9):
         lips_result = -1 # 입술 가로 길이 짧은 편
 
     return lips_result
@@ -317,19 +316,19 @@ def between_detection(list_points):
 
     #print("미간", between_ratio)
 
-    if (between_ratio >= 3.2 and between_ratio < 3.4):
+    if (between_ratio >= 3.1 and between_ratio < 3.4):
         between_result = 0
         between_percent = 0
         #print("미간 평균 ", between_ratio)
 
-    elif (between_ratio < 3.2):
+    elif (between_ratio < 3.1):
         between_result = -1
-        between_percent = abs(3.3 - between_ratio)
+        between_percent = round(abs(3.25 - between_ratio),2)
         #print("미간 짧은 편 ", between_ratio)
         #미간 긴 편
     elif (between_ratio > 3.4):
         between_result = 1
-        between_percent = abs(3.3 - between_ratio)
+        between_percent = round(abs(3.25 - between_ratio),2)
         #print("미간 긴 편 ", between_ratio)
 
         #미간 짧은편
@@ -353,9 +352,9 @@ def eyeshape_detection(list_points):
         eyeupdown = (abs(p2 - p6) + abs(p3 - p5)) / (2 * (abs(p4 - p1)))
 
     #print("눈의 비율", eyeupdown)
-    if (eyeupdown >= 0.36):
+    if (eyeupdown >= 0.35):
         eyeshape_result = 1 # 눈꼬리 올라감
-    elif (eyeupdown >= 0.32):
+    elif (eyeupdown >= 0.25):
         eyeshape_result = 0 # 눈꼬리 보통
     else:
         eyeshape_result = -1 # 눈꼬리 내려감
@@ -365,15 +364,12 @@ def eyeshape_detection(list_points):
 '''
 #메부리코 여부
 def noseline_detection(image_side):
-
     mpDraw = mp.solutions.drawing_utils
     mpFaceMesh = mp.solutions.face_mesh
     faceMesh = mpFaceMesh.FaceMesh(max_num_faces=2)
     drawSpec = mpDraw.DrawingSpec(thickness=1, circle_radius=2)
-
     imgRGB = cv2.cvtColor(image_side, cv2.COLOR_BGR2RGB)
     results = faceMesh.process(imgRGB)
-
     noseline = []
     if results.multi_face_landmarks:
         for faceLms in results.multi_face_landmarks:
@@ -381,29 +377,18 @@ def noseline_detection(image_side):
                 ih, iw, ic = image_side.shape
                 x, y = int(lm.x * iw), int(lm.y * ih)
                 cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
-
                 if (id == 197 or id == 195 or id == 4 or id == 5 or id == 6):  # 콧대
                     cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
                     noseline.append([id, x, y])
-
-
     print(noseline)
-
     m1 = (noseline[0][2] - noseline[2][2]) / (noseline[0][1] - noseline[2][1])  # 4번-6번 기울기 (코 양끝)
-
     m2 = (noseline[0][2] - noseline[1][2]) / (noseline[0][1] - noseline[1][1])  # 4번-5번 기울기
     m3 = (noseline[1][2] - noseline[2][2]) / (noseline[1][1] - noseline[2][1])  # 5번-195번 기울기
     m4 = (noseline[2][2] - noseline[3][2]) / (noseline[2][1] - noseline[3][1])  # 195번-197번 기울기
     m5 = (noseline[3][2] - noseline[4][2]) / (noseline[3][1] - noseline[4][1])  # 197번-6번 기울기
-
     avg = (m2 + m3 + m4 + m5) / 4
-
     print(m1,m2,m3,m4,m5,avg)
-
-
-
     #if(abs(avr-m1) > )
-
     return 0
 '''
 
@@ -454,7 +439,7 @@ error_index = 0 # 0:정상 1:랜드마크 검출 오류 2:얼굴형 오류 3:얼
 
 try:
     # 이미지 읽어오기
-    image_front_origin = cv2.imread("./front/k.jpg")
+    image_front_origin = cv2.imread("./front/k22.jpg")
     image_side_origin = cv2.imread("./side/3.jpg")
     image_faceline = Image.open("./front/k.jpg")
 
