@@ -94,12 +94,14 @@ def hair_up (img1,list_points):
         roi = hair_mask[pnt[1]:pnt[1] + 40, pnt[0] - 40:pnt[0] + 40]  # Select the rectangle under the top dot
         cnt = cv2.countNonZero(roi)  # Count the number of non-zero points in this rectangle
         # If the number of points is less than 25%, then we think that the head is bald
-        if cnt < 800:
-            # print("Bald human on phoro")
+        print("cntttt", cnt)
+        if cnt < 0:
+            # print("Bald human on photo")
             return True
         else:
             # print("Not Bold")
             return False
+
 
     mask = get_head_mask(img1)
 
@@ -275,19 +277,19 @@ def eyeh_detection(list_points):
 
     ratio_eyeh = abs(face_h / reye_h)
 
-    #print("눈", ratio_eyeh)
+    print("눈", ratio_eyeh)
 
-    if (ratio_eyeh >= 21.1 and ratio_eyeh <= 22.5):  # 평균비 = 24
+    if (ratio_eyeh >= 21.1 and ratio_eyeh <= 23):  # 평균비 = 24
         eyeh_result = 0
         eyeh_percent = 0
         # print("눈 세로 길이 평균")
     elif (ratio_eyeh < 21.1):
         eyeh_result = 1
-        eyeh_percent = round(abs(21.8 - ratio_eyeh),2)
+        eyeh_percent = round(abs(22.05 - ratio_eyeh),2)
         # print("눈 세로 길이 평균보다 %.1f%% 긴 편" % (abs(23.8 - ratio_eyeh)))
-    elif (ratio_eyeh > 22.5):
+    elif (ratio_eyeh > 23):
         eyeh_result = -1
-        eyeh_percent = round(abs(21.8 - ratio_eyeh),2)
+        eyeh_percent = round(abs(22.05 - ratio_eyeh),2)
         # print("눈 세로 길이 평균보다 %.1f%% 짧은 편" % (abs(23.8 - ratio_eyeh)))
 
     return eyeh_result, eyeh_percent
@@ -439,9 +441,9 @@ error_index = 0 # 0:정상 1:랜드마크 검출 오류 2:얼굴형 오류 3:얼
 
 try:
     # 이미지 읽어오기
-    image_front_origin = cv2.imread("./front/k22.jpg")
+    image_front_origin = cv2.imread("./front/k5.jpg")
     image_side_origin = cv2.imread("./side/3.jpg")
-    image_faceline = Image.open("./front/k.jpg")
+    image_faceline = Image.open("./front/k5.jpg")
 
     # 얼굴형 분류 모델의 위치 = PATH
     PATH = 'model_76.pt'
