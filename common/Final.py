@@ -94,7 +94,7 @@ def hair_up (img1,list_points):
         roi = hair_mask[pnt[1]:pnt[1] + 40, pnt[0] - 40:pnt[0] + 40]  # Select the rectangle under the top dot
         cnt = cv2.countNonZero(roi)  # Count the number of non-zero points in this rectangle
         # If the number of points is less than 25%, then we think that the head is bald
-        print("cntttt", cnt)
+        #print("cntttt", cnt)
         if cnt < 0:
             # print("Bald human on photo")
             return True
@@ -123,7 +123,6 @@ def hair_up (img1,list_points):
     if is_bold(topmost, mask):
         cv2.rectangle(img1, topmost, topmost, (0, 0, 255), 5)
         #print(topmost)
-
 
 
     # Otherwise we write that we are not bald and display the coordinates of the largest contour
@@ -193,7 +192,7 @@ def side_cheekbone_have(list_points):
     flag = 0
     x = (list_points[JAWLINE][1] - list_points[JAWLINE][2])[0]
     y = (list_points[JAWLINE][1] - list_points[JAWLINE][2])[1]
-    print("옆광대",abs(y/x))
+    #print("옆광대",abs(y/x))
     if (abs(y / x) <= 6.0): flag = 1
 
     ''' <광대 여부 있나 확인> 
@@ -256,17 +255,19 @@ def eyew_detection(list_points):
 
     ratio_eyew = abs(face_w / reye_w)
 
-    if (ratio_eyew >= 5.5 and ratio_eyew <= 5.85):  # 평균값 = 5.675
+    #print("눈 가로", ratio_eyew)
+
+    if (ratio_eyew >= 5.0 and ratio_eyew <= 5.3):  # 평균값 = 5.675
         eyew_result = 0
         eyew_percent = 0
         #print("눈 가로 길이는 평균")
-    elif (ratio_eyew < 5.5):
+    elif (ratio_eyew < 5.0):
         eyew_result = 1
-        eyew_percent = round(abs(5.675 - ratio_eyew),2)
+        eyew_percent = round(abs(5.15 - ratio_eyew),2)
         #print("눈 가로 길이 평균보다 %.1f%% 긴 편" % (abs(5.675 - ratio_eyew)))
-    elif (ratio_eyew > 5.85):
+    elif (ratio_eyew > 5.3):
         eyew_result = -1
-        eyew_percent = round(abs(5.675 - ratio_eyew),2)
+        eyew_percent = round(abs(5.15 - ratio_eyew),2)
         #print("눈 가로 길이 평균보다 %.1f%% 짧은 편" % (abs(5.675 - ratio_eyew)))
 
     return eyew_result, eyew_percent
@@ -277,7 +278,7 @@ def eyeh_detection(list_points):
 
     ratio_eyeh = abs(face_h / reye_h)
 
-    print("눈", ratio_eyeh)
+    #print("눈 세로", ratio_eyeh)
 
     if (ratio_eyeh >= 21.1 and ratio_eyeh <= 23):  # 평균비 = 24
         eyeh_result = 0
@@ -299,7 +300,7 @@ def lips_detection(list_points):
     lips_w = abs(list_points[MOUTH_OUTLINE][0] - list_points[MOUTH_OUTLINE][6])[0]  # 입술 가로
 
     ratio_lips = face_w / lips_w
-    print("입술", ratio_lips)
+    #print("입술", ratio_lips)
 
     if (ratio_lips >= 2.5 and ratio_lips <= 2.9):
         lips_result = 0 # 입술 가로 길이 평균
@@ -339,7 +340,6 @@ def between_detection(list_points):
 
 #눈꼬리
 def eyeshape_detection(list_points):
-
     p1 = list_points[RIGHT_EYE][0][0]
     p2 = list_points[RIGHT_EYE][1][1]
     p3 = list_points[RIGHT_EYE][2][1]
@@ -396,7 +396,6 @@ def noseline_detection(image_side):
 
 # 앞광대 여부
 def front_cheekbone_have(list_points,image_side):
-
     #pTime = 0
 
     mpDraw = mp.solutions.drawing_utils
@@ -414,12 +413,41 @@ def front_cheekbone_have(list_points,image_side):
                 ih, iw, ic = image_side.shape
                 x, y = int(lm.x * iw), int(lm.y * ih)
 
-                if (id == 116 or id == 123 or id == 147 or id == 192 or id == 213):  # test
+                #cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
+
+                if (id == 116 or id == 123 or id == 147 or id == 192 or id == 213):  # 앞광대 판별용
                     # print(id,x,y)
                     #pt_pos2 = (x, y)
                     # cheekbone.append([id, pt_pos2])
                     cheekbone.append([id, x, y])
+                    cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1) # 보라색rgb = (137, 119, 173)
+
+                #### 출력용 ####
+
+                if (id == 8 or id == 168 or id == 197 or id == 5 or id == 1 or id == 2):  # 콧대 index에만 점을 찍음
                     cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
+                    
+                if (id == 9 or id == 8 or id == 168 or id == 6 or id == 197 or id == 195 or id == 5 or id == 4 or id == 1 or id == 2):  # 콧대 index에만 점을 찍음
+                    cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
+
+                if (id == 18 or id == 200 or id == 199 or id == 175):  # 앞턱 index에만 점을 찍음
+                    cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
+
+                if (id == 152 or id == 377 or id == 400 or id == 378 or id == 379 or id == 365 or id == 397 or id == 288 or id == 361):  # 옆턱 index에만 점을 찍음
+                    cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
+
+                # if (id == 14 or id == 15 or id == 16 or id == 17 or id == 0 or id == 11 or id == 13):  # 입술 index에만 점을 찍음
+                #     # print(id, x, y)
+                #     cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
+                #
+                # if (id == 164 or id == 2): # 인중
+                #     cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
+
+                #if (id == 135):
+                #    cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
+
+                #if (id == 149 or id == 176 or id == 148):
+                #    cv2.circle(image_side, (x, y), 2, (0, 255, 0), -1)
 
     m = (cheekbone[3][2] - cheekbone[1][2]) / (cheekbone[3][1] - cheekbone[1][1])  # 123번-192번 기울기
 
@@ -441,9 +469,9 @@ error_index = 0 # 0:정상 1:랜드마크 검출 오류 2:얼굴형 오류 3:얼
 
 try:
     # 이미지 읽어오기
-    image_front_origin = cv2.imread("./front/k5.jpg")
-    image_side_origin = cv2.imread("./side/3.jpg")
-    image_faceline = Image.open("./front/k5.jpg")
+    image_front_origin = cv2.imread("./front/32.png")
+    image_side_origin = cv2.imread("./side/20.jpg")
+    image_faceline = Image.open("./front/k22.jpg")
 
     # 얼굴형 분류 모델의 위치 = PATH
     PATH = 'model_76.pt'
